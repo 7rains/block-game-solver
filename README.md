@@ -1,4 +1,4 @@
-### Find optimal solution for blocks game
+# Find optimal solution for blocks game
 
 ## The Game
 
@@ -31,9 +31,9 @@ console.log(gameSolver.solve(state));  // 8
 
 ## Todo
 
-Optimize heuristic function.
-Exit if game is not solvable.
-Add a build step to strip out test only code to expose private functions. 
+* Optimize heuristic function.
+* Exit if game is not solvable.
+* Add a build step to strip out test only code to expose private functions. 
 
 
 
