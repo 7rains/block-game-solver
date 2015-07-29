@@ -1,0 +1,18 @@
+{
+  "name": "fetch-test",
+  "version": "0.0.1",
+  "description": "Playing with a streaming response using the fetch API.",
+  "author": "Steven Goodwin",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "priorityqueuejs": "*"
+  },
+  "devDependencies": {
+    "mocha": "*"
+  },
+  "scripts": {
+    "start": "node --harmony solver.js",
+    "test": "mocha --harmony"
+  }
+}
