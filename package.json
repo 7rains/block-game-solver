@@ -1,7 +1,7 @@
 {
-  "name": "fetch-test",
+  "name": "solver",
   "version": "0.0.1",
-  "description": "Playing with a streaming response using the fetch API.",
+  "description": "Find optimal solution for blocks game.",
   "author": "Steven Goodwin",
   "private": true,
   "license": "MIT",
