@@ -12,7 +12,7 @@
     "mocha": "*"
   },
   "scripts": {
-    "start": "node --harmony solver.js",
+    "start": "node --harmony main.js",
     "test": "mocha --harmony"
   }
 }

@@ -163,12 +163,59 @@ function heuristic (blocks, tiles) {
     if (coord.x === tiles[i].coordinates.x && coord.y === tiles[i].coordinates.y) {
       cost += 0;
     } else if (coord.x === tiles[i].coordinates.x || coord.y === tiles[i].coordinates.y) {
-      cost += 1;
+      if (pathObstructed(coord, tiles[i].coordinates, blocks)) {
+        cost += 2;
+      } else {
+        cost += 1;
+      }
     } else {
       cost += 2;
     }
   }
   return cost;
+}
+
+
+function pathObstructed (a, b, blocks) {
+  if (a.x === b.x) {
+    let min = Math.min(a.y, b.y) + 1;
+    let max = Math.max(a.y, b.y) - 1;
+
+    // if blocks are next to eachother
+    if (max < min) {
+      return false
+    }
+
+    // check path for blocks
+    for (let i = min; i <= max; i++) {
+      if (findByCoordinates(a.x, i, blocks)) {
+        return true
+      }
+    }
+
+    // no blocks found
+    return false;
+  }
+
+  else if (a.y === b.y) {
+    let min = Math.min(a.x, b.x) + 1;
+    let max = Math.max(a.x, b.x) - 1;
+
+    // if blocks are next to eachother
+    if (max < min) {
+      return false
+    }
+
+    // check path for blocks
+    for (let i = min; i <= max; i++) {
+      if (findByCoordinates(i, a.y, blocks)) {
+        return true
+      }
+    }
+
+    // no blocks found
+    return false;
+  }
 }
 
 
@@ -186,12 +233,94 @@ function cloneState (blocks) {
   return clone;
 }
 
+function cleanLevel(level) {
+  for (let i = 0, len = level.blocks.length; i < len; i++) {
+    level.blocks[i].coordinates.x = parseInt(level.blocks[i].coordinates.x);
+    level.blocks[i].coordinates.y = parseInt(level.blocks[i].coordinates.y);
+  }
+
+  for (let i = 0, len = level.tiles.length; i < len; i++) {
+    level.tiles[i].coordinates.x = parseInt(level.tiles[i].coordinates.x);
+    level.tiles[i].coordinates.y = parseInt(level.tiles[i].coordinates.y);
+  }
+}
+
+function getStepsToSolve (solution) {
+  let steps = [];
+  for (let i = solution.length - 1; i >= 1; i--) {
+    // compare with the next state
+    steps.push(deriveMoveFromStates(solution[i], solution[i-1]));
+  }
+  console.log(JSON.stringify(steps));
+}
+
+function deriveMoveFromStates (s1, s2) {
+  for (let i = 0, len = s1.length; i < len; i++) {
+    if (s1[i].color !== 'white') {
+      if (!compareCoordinates(s1[i].coordinates, s2[i].coordinates)) {
+        return {blockColor: s1[i].color, direction: getDirectionFromCoordinates(s1[i].coordinates, s2[i].coordinates)};
+      }
+    }
+  }
+}
+
+
+function getDirectionFromCoordinates (c1, c2) {
+  if (c1.y > c2.y) {
+    return 'north';
+  } else if (c1.y < c2.y) {
+    return 'south';
+  } else if (c1.x > c2.x) {
+    return 'west';
+  } else if (c1.x < c2.x) {
+    return 'east';
+  } else {
+    return 'none';
+  }
+}
+
+function compareCoordinates (c1, c2) {
+  return c1.x === c2.x && c1.y === c2.y;
+}
+
 
 function solve (level) {
+  cleanLevel(level);
   let winState = explore(level.blocks, level.tiles);
   let solution = getSolution(winState);
-  // console.log(solution);
+  for (let i = solution.length -1 ; i >= 0; i--) {
+    // printState(solution[i]);
+  }
+  getStepsToSolve(solution);
   return solution.length - 1;
+}
+
+function findBlockByCoordinates (state, coordinates) {
+  for (let i = 0, len = state.length; i < len; i++) {
+    if (compareCoordinates(state[i].coordinates, coordinates)) {
+      return state[i];
+    }
+  }
+  return null;
+}
+
+function printState (s) {
+  let string = '';
+  let block = {};
+  // iterate through all blocks in state
+  for (let i = 0; i < 8; i++) {
+    for (let j = 0; j < 8; j++) {
+      block = findBlockByCoordinates(s, {x: i, y: j})
+      if (block) {
+        string += '[ ' + block.color[0] + ' ]';
+      } else {
+        string += '[   ]';
+      }
+    } 
+    string += '\n';
+  }
+
+  console.log(string);
 }
 
 
@@ -204,6 +333,7 @@ module.exports = {
     findCoordByColor:  findCoordByColor,
     gameWon:           gameWon,
     move:              move,
+    pathObstructed:    pathObstructed
   },
   /* private test api */
 

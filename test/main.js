@@ -51,6 +51,30 @@ describe('Private', function () {
     });
   });
 
+
+  describe('pathObstructed', function () {
+    it('should return false if two points are adjacent', function () {
+      let blocks = [];
+      assert.equal(false, solver.__testonly__.pathObstructed({x: 4, y: 2}, {x: 5, y: 2}, blocks));
+      assert.equal(false, solver.__testonly__.pathObstructed({x: 4, y: 3}, {x: 4, y: 2}, blocks));
+    });
+
+    it('should return true if block is between two points', function () {
+      let blocks = [{coordinates: {x: 4, y: 5}, color: 'blah'}];
+      assert.equal(true, solver.__testonly__.pathObstructed({x: 3, y: 5}, {x: 5, y: 5}, blocks));
+      assert.equal(true, solver.__testonly__.pathObstructed({x: 4, y: 4}, {x: 4, y: 6}, blocks));
+
+      blocks = [{coordinates: {x: 4, y: 0}, color: 'blah'}, {coordinates: {x: 1, y: 0}, color: 'blah'}];
+      assert.equal(true, solver.__testonly__.pathObstructed({x: 0, y: 0}, {x: 7, y: 0}, blocks));
+    });
+
+    it('should return false if block is not between two points', function () {
+      let blocks = [{coordinates: {x: 4, y: 6}, color: 'blah'}];
+      assert.equal(false, solver.__testonly__.pathObstructed({x: 0, y: 6}, {x: 3, y: 6}, blocks));
+      assert.equal(false, solver.__testonly__.pathObstructed({x: 4, y: 7}, {x: 6, y: 7}, blocks));
+    });
+  });
+
 });
 
 
