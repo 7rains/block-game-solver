@@ -1,7 +1,6 @@
 'use strict';
 
 let PriorityQueue = require('priorityqueuejs');
-// var Map = require('es6-map/polyfill');
 var md5 = require('md5');
 
 
@@ -99,6 +98,7 @@ function explore (blocks, tiles) {
             return newState;
           }
         }
+
       }
     }
   }
@@ -108,6 +108,9 @@ function explore (blocks, tiles) {
 function getSolution (state) {
   let solution = [];
   solution.push(state);
+
+  console.log('state');
+  console.log(state);
 
   for ( ; state = visitedStates.get(hasher(state)).previousState; ) {
     solution.push(state);
@@ -125,7 +128,7 @@ function move (blocks, blockIndex, direction) {
 
     // don't let v8 optimize hack
     try {} finally {};
-    
+
     move(blocks, blockIndex, direction);
   }
 }
@@ -317,15 +320,17 @@ function findBlockByCoordinates (state, coordinates) {
 }
 
 function hasher (state) {
-  // let str = '';
+  let str = '';
 
-  // for (let i = 0, len = state.length; i < len; i++) {
-  //   if (state[i].color !== 'white') {
-  //     str += state[i].color + state[i].coordinates.x + state[i].coordinates.y;
-  //   }
-  // }
+  for (let i = 0, len = state.length; i < len; i++) {
+    if (state[i].color !== 'white') {
+      str += state[i].color[0] + state[i].coordinates.x + state[i].coordinates.y;
+    }
+  }
+  return str;
+  // console.log(md5(str));
   // return md5(str);
-  return md5(JSON.stringify(state));
+  // return md5(JSON.stringify(state));
 
 }
 
