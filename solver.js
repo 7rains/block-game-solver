@@ -1,6 +1,8 @@
 'use strict';
 
 let PriorityQueue = require('priorityqueuejs');
+// var Map = require('es6-map/polyfill');
+var md5 = require('md5');
 
 
 /*
@@ -61,14 +63,19 @@ function gameWon (blocks, tiles) {
 function explore (blocks, tiles) {
   let moves = 0;
   let newState = cloneState(blocks);
-  visitedStates.set(JSON.stringify(newState), {previousState: null, cost: 0});
+  let item = {};
+  visitedStates.set(hasher(newState), {previousState: null, cost: 0});
 
   queue.enq({ state: newState, estimate: heuristic(newState, tiles) });
 
   while (queue.size() > 0) {
-    let item = queue.deq();
+
+    item = queue.deq();
+
     let currentState = item.state;
     let i, blockLength;
+
+
 
     for (i = 0, blockLength = currentState.length; i < blockLength; i++) {
 
@@ -78,13 +85,14 @@ function explore (blocks, tiles) {
       }
 
       for (let j = 0, directionLength = DIRECTIONS.length; j < directionLength; j++) {
-        let newState = cloneState(currentState);
+        newState = cloneState(currentState);
         move(newState, i, DIRECTIONS[j]);
 
-        let newCost = visitedStates.get(JSON.stringify(currentState)).cost + 1;
+        let newCost = visitedStates.get(hasher(currentState)).cost + 1;
 
-        if (!visitedStates.has(JSON.stringify(newState)) || newCost < visitedStates.get(JSON.stringify(newState)).cost ) {
-          visitedStates.set(JSON.stringify(newState), {previousState: currentState, cost: newCost});
+        if (!visitedStates.has(hasher(newState)) || newCost < visitedStates.get(hasher(newState)).cost ) {
+          visitedStates.set(hasher(newState), {previousState: currentState, cost: newCost});
+
           queue.enq({ state: newState, estimate: newCost + heuristic(newState, tiles) });
 
           if (gameWon(newState, tiles)) {
@@ -101,7 +109,7 @@ function getSolution (state) {
   let solution = [];
   solution.push(state);
 
-  for ( ; state = visitedStates.get(JSON.stringify(state)).previousState; ) {
+  for ( ; state = visitedStates.get(hasher(state)).previousState; ) {
     solution.push(state);
   }
 
@@ -302,6 +310,19 @@ function findBlockByCoordinates (state, coordinates) {
     }
   }
   return null;
+}
+
+function hasher (state) {
+  // let str = '';
+
+  // for (let i = 0, len = state.length; i < len; i++) {
+  //   if (state[i].color !== 'white') {
+  //     str += state[i].color + state[i].coordinates.x + state[i].coordinates.y;
+  //   }
+  // }
+  // return md5(str);
+  return md5(JSON.stringify(state));
+
 }
 
 function printState (s) {

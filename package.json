@@ -6,7 +6,8 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "priorityqueuejs": "*"
+    "priorityqueuejs": "*",
+    "md5": "*"
   },
   "devDependencies": {
     "mocha": "*"
