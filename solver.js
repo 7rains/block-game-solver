@@ -122,6 +122,10 @@ function move (blocks, blockIndex, direction) {
   if (valid(blocks, pos.x, pos.y)) {
     blocks[blockIndex].coordinates.x = pos.x;
     blocks[blockIndex].coordinates.y = pos.y; 
+
+    // don't let v8 optimize hack
+    try {} finally {};
+    
     move(blocks, blockIndex, direction);
   }
 }
